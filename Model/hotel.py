@@ -89,9 +89,9 @@ class Hotel():
                         member_lev = selector.xpath("//ul[@class='J-rate-list']//li[@class='J-ratelist-item rate-list__item cf']//span[@class='growth-info']//i//@title")
                         date = selector.xpath("//ul[@class='J-rate-list']//li[@class='J-ratelist-item rate-list__item cf']//div[@class='info cf']//span[@class='time']//text()")
                         if(int(comment_count) > 10):
-                            page_num = selector.xpath("//div[@class='paginator J-rate-paginator']//li[@class='current']//span//@data-index")       # current page num
+                            page_num = selector.xpath("//div[@class='paginator J-rate-paginator']//li[@class='current']//span//@data-index")[0]       # current page num
                         else:
-                            comment_count = 1
+                            page_num = 1
 
                         print("save:" + str(ht_id)+'_'+str(page_num[0]))
                         if self.__redis.sismember('is_saved_comments', str(ht_id)+'_'+str(page_num)) is 0:
