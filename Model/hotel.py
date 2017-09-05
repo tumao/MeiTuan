@@ -93,7 +93,7 @@ class Hotel():
                         else:
                             page_num = 1
 
-                        print("save:" + str(ht_id)+'_'+str(page_num[0]))
+                        print("save:" + str(ht_id)+'_'+str(page_num))
                         if self.__redis.sismember('is_saved_comments', str(ht_id)+'_'+str(page_num)) is 0:
                             for x in range(len(comments)):
                                 self.save_comments_info(content=str(comments[x]).strip('\n').strip(" "), star=str(star[x]).strip('width:'), hotel_member_lv=str(member_lev[x]).strip("等级"), date=date[x], ht_id=ht_id, page_num=page_num[0])
