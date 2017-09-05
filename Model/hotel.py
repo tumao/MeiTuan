@@ -130,7 +130,7 @@ class Hotel():
             self.__cur.execute(sql%data)
             self.__conn.commit()
         except ProgrammingError as pe:
-            continue
+            pass
 
     def __del__(self):
         self.close()
