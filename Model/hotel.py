@@ -93,6 +93,7 @@ class Hotel():
                         else:
                             comment_count = 1
 
+                        print("save:" + str(ht_id)+'_'+str(page_num))
                         if self.__redis.sismember('is_saved_comments', str(ht_id)+'_'+str(page_num)) is 0:
                             for x in range(len(comments)):
                                 self.save_comments_info(content=str(comments[x]).strip('\n').strip(" "), star=str(star[x]).strip('width:'), hotel_member_lv=str(member_lev[x]).strip("等级"), date=date[x], ht_id=ht_id, page_num=page_num[0])
@@ -102,7 +103,7 @@ class Hotel():
 
                         next_page__att = selector.xpath("//div[@class='paginator J-rate-paginator']//li[@class='next']//i//@class")
 
-                        print(comment_count,next_page__att)
+                        print(comment_count, next_page__att)
                         if int(comment_count) < 10 or next_page__att[0] == 'tri disable':   # only one page, next page cannot click
                             print("there is no next page, to next hotel")
                             next_page = False
