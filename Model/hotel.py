@@ -7,6 +7,7 @@ from selenium.common.exceptions import WebDriverException
 from lxml import etree
 import redis
 import random
+from pymysql.err import ProgrammingError
 
 class Hotel():
 
@@ -52,7 +53,7 @@ class Hotel():
 
     """get hotel info"""
     def getHotelInfo(self):
-        sql = "SELECT id, url FROM `hotel_info` WHERE `web_id`= 1 ORDER BY `id` ASC "
+        sql = "SELECT id, url FROM `hotel_info` WHERE `web_id`= 1 and id > 15 ORDER BY `id` ASC "
         self.__cur.execute(sql)
         self.__conn.commit()
         return self.__cur.fetchall()
@@ -96,7 +97,7 @@ class Hotel():
                         print("save:" + str(ht_id)+'_'+str(page_num))
                         if self.__redis.sismember('is_saved_comments', str(ht_id)+'_'+str(page_num)) == 0:
                             for x in range(len(comments)):
-                                self.save_comments_info(content=str(comments[x]).strip('\n').strip(" "), star=str(star[x]).strip('width:'), hotel_member_lv=str(member_lev[x]).strip("等级"), date=date[x], ht_id=ht_id, page_num=page_num)
+                                self.save_comments_info(content=str(comments[x]).strip("\\n").strip(" "), star=str(star[x]).strip('width:'), hotel_member_lv=str(member_lev[x]).strip("等级"), date=date[x], ht_id=ht_id, page_num=page_num)
                             self.__redis.sadd('is_saved_comments', str(ht_id)+'_'+str(page_num))            # wether saved this page comment
                         else:
                             print("this page already saved")
@@ -125,8 +126,11 @@ class Hotel():
         sql = "INSERT INTO `comments`(`content`,`star`,`hotel_member_lv`,`date`, `ht_id`, `page_num`) VALUES ('%s','%s','%s','%s', %d, %d)"
         data = (content, star, hotel_member_lv, date, int(ht_id), int(page_num))
         print(data)
-        self.__cur.execute(sql%data)
-        self.__conn.commit()
+        try:
+            self.__cur.execute(sql%data)
+            self.__conn.commit()
+        except ProgrammingError as pe:
+            continue
 
     def __del__(self):
         self.close()
