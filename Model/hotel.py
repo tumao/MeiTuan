@@ -53,7 +53,7 @@ class Hotel():
 
     """get hotel info"""
     def getHotelInfo(self):
-        sql = "SELECT id, url FROM `hotel_info` WHERE `web_id`= 1 and id > 15 ORDER BY `id` ASC "
+        sql = "SELECT id, url FROM `hotel_info` WHERE `web_id`= 1 and id > 549 ORDER BY `id` ASC "
         self.__cur.execute(sql)
         self.__conn.commit()
         return self.__cur.fetchall()
@@ -64,6 +64,7 @@ class Hotel():
 
         options = webdriver.ChromeOptions()
         options.add_experimental_option("excludeSwitches", ["ignore-certificate-errors"])  # 屏蔽掉浏览器的认证错误
+        options.add_argument('--user-agent=iphone')
         # options.add_experimental_option('prefs', {"profile.managed_default_content_settings.images": 2})
         driver = webdriver.Chrome('/usr/bin/chromedriver', chrome_options=options)
         for i in range(len(htinfo)):
