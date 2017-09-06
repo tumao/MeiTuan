@@ -73,7 +73,8 @@ class Hotel():
                 ht_id = htinfo[i][0]
                 driver.get("http://" + htinfo[i][1])
                 time.sleep(10)
-                comment_ele = driver.find_element_by_xpath("//ul[@class='J-nav-tabs nav-tabs--normal cf log-mod-viewed']//li[@data-target='.J-poi-comment']/a")
+                # comment_ele = driver.find_element_by_xpath("//ul[@class='J-nav-tabs nav-tabs--normal cf log-mod-viewed']//li[@data-target='.J-poi-comment']/a")
+                comment_ele = driver.find_element_by_xpath("//ul[@class='nav-tabs clearfix bgw']//a[@href='#comment']")
                 comment_count = str(comment_ele.text).strip("住客点评").strip(" (").strip(")")
                 comment_ele.click()         # jump to the comment page
 
@@ -88,41 +89,44 @@ class Hotel():
                         print("此处停留"+str(wait_time)+"s")
                         time.sleep(wait_time)
                         selector = etree.HTML(driver.page_source)
-                        comments = selector.xpath("//ul[@class='J-rate-list']//li[@class='J-ratelist-item rate-list__item cf']//p[@class='content']//text()")  # comments content
-                        star = selector.xpath("//ul[@class='J-rate-list']//li[@class='J-ratelist-item rate-list__item cf']//span[@class='common-rating']//span//@style")
-                        member_lev = selector.xpath("//ul[@class='J-rate-list']//li[@class='J-ratelist-item rate-list__item cf']//span[@class='growth-info']//i//@title")
-                        date = selector.xpath("//ul[@class='J-rate-list']//li[@class='J-ratelist-item rate-list__item cf']//div[@class='info cf']//span[@class='time']//text()")
+                        # comments = selector.xpath("//ul[@class='J-rate-list']//li[@class='J-ratelist-item rate-list__item cf']//p[@class='content']//text()")  # comments content
+                        comments = selector.xpath("//div[@class='ratelist-content clearfix']//ul//li[@class='rate-list-item clearfix']//p[@class='content']//text()")
+                        # star = selector.xpath("//ul[@class='J-rate-list']//li[@class='J-ratelist-item rate-list__item cf']//span[@class='common-rating']//span//@style")
+                        star = selector.xpath("//div[@class='ratelist-content clearfix']//ul//li[@class='rate-list-item clearfix']//div[@class='rate-status']//span//@style")
+                        # member_lev = selector.xpath("//ul[@class='J-rate-list']//li[@class='J-ratelist-item rate-list__item cf']//span[@class='growth-info']//i//@title")
+                        # date = selector.xpath("//ul[@class='J-rate-list']//li[@class='J-ratelist-item rate-list__item cf']//div[@class='info cf']//span[@class='time']//text()")
+                        date = selector.xpath("//div[@class='ratelist-content clearfix']//ul//li[@class='rate-list-item clearfix']//span[@class='time pull-right']//text()")
                         if(int(comment_count) > 10):
-                            page_num = selector.xpath("//div[@class='paginator J-rate-paginator']//li[@class='current']//span//@data-index")[0]       # current page num
+                            page_num = selector.xpath("//div[@class='paginator-wrapper']//li[@class='current']//span//text()")[0]       # current page num
                         else:
                             page_num = 1
 
                         print("save:" + str(ht_id)+'_'+str(page_num))
                         if self.__redis.sismember('is_saved_comments', str(ht_id)+'_'+str(page_num)) == 0:
                             for x in range(len(comments)):
-                                self.save_comments_info(content=str(comments[x]).strip('\n').strip(" ").replace('\n', ''), star=str(star[x]).strip('width:'), hotel_member_lv=str(member_lev[x]).strip("等级"), date=date[x], ht_id=ht_id, page_num=page_num)
+                                self.save_comments_info(content=str(comments[x]).strip('\n').strip(" ").replace('\n', ''), star=str(star[x]).strip('width:'), hotel_member_lv=str("000-000"), date=date[x], ht_id=ht_id, page_num=page_num)
                             self.__redis.sadd('is_saved_comments', str(ht_id)+'_'+str(page_num))            # wether saved this page comment
                         else:
                             print("this page already saved")
 
-                        next_page__att = selector.xpath("//div[@class='paginator J-rate-paginator']//li[@class='next']//i//@class")
+                        next_page__att = selector.xpath("//div[@class='paginator-wrapper']//li[@class='next']//@class")
 
                         print(comment_count, next_page__att)
-                        if int(comment_count) < 10 or next_page__att[0] == 'tri disable':   # only one page, next page cannot click
+                        if int(comment_count) < 10 or next_page__att[0] == 'disabled next':   # only one page, next page cannot click
                             print("there is no next page, to next hotel")
                             next_page = False
                         else:
                             print("click the next page")
-                            driver.find_element_by_xpath("//div[@class='paginator J-rate-paginator']//li[@class='next']//i[@class='tri']").click()
+                            driver.find_element_by_xpath("//div[@class='paginator-wrapper']//li[@class='next']//i").click()
 
             except IndexError as ie_rr:
-                continue
+                pass
             except NoSuchElementException as no_ele_err:
                 print(no_ele_err)
-                continue
+                pass
             except WebDriverException as web_err:
                 print(web_err)
-                continue
+                pass
         driver.close()
 
     def save_comments_info(self, content, star, hotel_member_lv, date, ht_id, page_num):
