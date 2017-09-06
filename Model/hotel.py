@@ -53,7 +53,7 @@ class Hotel():
 
     """get hotel info"""
     def getHotelInfo(self):
-        sql = "SELECT id, url FROM `hotel_info` WHERE `web_id`= 1 and id > 549 ORDER BY `id` ASC "
+        sql = "SELECT id, url FROM `hotel_info` WHERE `web_id`= 1 and id > 622 ORDER BY `id` ASC "
         self.__cur.execute(sql)
         self.__conn.commit()
         return self.__cur.fetchall()
@@ -84,7 +84,9 @@ class Hotel():
                     next_page = True
                     # driver.find_element_by_xpath("//select[@class='J-filter-ordertype ui-select-small']//option[@value='time']").click() # comment sorted by time
                     while next_page is True:
-                        time.sleep(random.randint(10, 18))
+                        wait_time = random.randint(15, 25)
+                        print("此处停留"+str(wait_time)+"s")
+                        time.sleep(wait_time)
                         selector = etree.HTML(driver.page_source)
                         comments = selector.xpath("//ul[@class='J-rate-list']//li[@class='J-ratelist-item rate-list__item cf']//p[@class='content']//text()")  # comments content
                         star = selector.xpath("//ul[@class='J-rate-list']//li[@class='J-ratelist-item rate-list__item cf']//span[@class='common-rating']//span//@style")
