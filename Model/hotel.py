@@ -64,7 +64,7 @@ class Hotel():
 
         options = webdriver.ChromeOptions()
         options.add_experimental_option("excludeSwitches", ["ignore-certificate-errors"])  # 屏蔽掉浏览器的认证错误
-        options.add_argument('--user-agent=iphone')
+        options.add_argument('--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36')
         # options.add_experimental_option('prefs', {"profile.managed_default_content_settings.images": 2})
         driver = webdriver.Chrome('/usr/bin/chromedriver', chrome_options=options)
         for i in range(len(htinfo)):
