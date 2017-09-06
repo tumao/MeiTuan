@@ -86,6 +86,7 @@ class Hotel():
                     # driver.find_element_by_xpath("//select[@class='J-filter-ordertype ui-select-small']//option[@value='time']").click() # comment sorted by time
                     while next_page is True:
                         wait_time = random.randint(15, 25)
+                        # wait_time = 5
                         print("此处停留"+str(wait_time)+"s")
                         time.sleep(wait_time)
                         selector = etree.HTML(driver.page_source)
@@ -109,7 +110,7 @@ class Hotel():
                         else:
                             print("this page already saved")
 
-                        next_page__att = selector.xpath("//div[@class='paginator-wrapper']//li[@class='next']//@class")
+                        next_page__att = selector.xpath("//div[@class='paginator-wrapper']//li[last()]//@class")
 
                         print(comment_count, next_page__att)
                         if int(comment_count) < 10 or next_page__att[0] == 'disabled next':   # only one page, next page cannot click
@@ -117,7 +118,7 @@ class Hotel():
                             next_page = False
                         else:
                             print("click the next page")
-                            driver.find_element_by_xpath("//div[@class='paginator-wrapper']//li[@class='next']//i").click()
+                            driver.find_element_by_xpath("//div[@class='paginator-wrapper']//li[@class=' next']//a").click()
 
             except IndexError as ie_rr:
                 pass
