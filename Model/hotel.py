@@ -126,6 +126,7 @@ class Hotel():
                         else:
                             print("click the next page")
                             driver.find_element_by_xpath("//div[@class='paginator-wrapper']//li[@class=' next']//a").click()
+                self.__redis.set('cur_spid_ht_id', ht_id)
 
             except IndexError as ie_rr:
                 pass
