@@ -79,7 +79,7 @@ class Hotel():
             try:
                 ht_id = htinfo[i][0]
                 self.__redis.set('cur_spid_ht_id', ht_id)
-		driver.get("http://" + htinfo[i][1])
+		        driver.get("http://" + htinfo[i][1])
                 time.sleep(10)
                 # comment_ele = driver.find_element_by_xpath("//ul[@class='J-nav-tabs nav-tabs--normal cf log-mod-viewed']//li[@data-target='.J-poi-comment']/a")
                 comment_ele = driver.find_element_by_xpath("//ul[@class='nav-tabs clearfix bgw']//a[@href='#comment']")
