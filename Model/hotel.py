@@ -56,7 +56,7 @@ class Hotel():
         print(self.__redis.get("cur_spid_ht_id"))
 
         if self.__redis.get("cur_spid_ht_id") is not None:
-            cur_spid_ht_id = self.__redis.get("cur_spid_ht_id")
+            cur_spid_ht_id = int(self.__redis.get("cur_spid_ht_id"))
         else:
             cur_spid_ht_id = 912
 
