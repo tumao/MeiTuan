@@ -118,6 +118,10 @@ class Hotel():
                         else:
                             print("this page already saved")
 
+                        self.__redis.incrby(str(ht_id)+'_'+str(page_num), 1)
+                        if int(self.__redis.get(str(ht_id)+'_'+str(page_num))) > 3:      # 如果当前页面无法翻页，卡住时，则刷新当前页面
+                            driver.refresh()
+
                         next_page__att = selector.xpath("//div[@class='paginator-wrapper']//li[last()]//@class")
 
                         print(comment_count, next_page__att)
