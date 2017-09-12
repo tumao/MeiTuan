@@ -53,7 +53,7 @@ class Hotel():
 
     """get hotel info"""
     def getHotelInfo(self):
-        sql = "SELECT id, url FROM `hotel_info` WHERE `web_id`= 1 and id > 665 ORDER BY `id` ASC "
+        sql = "SELECT id, url FROM `hotel_info` WHERE `web_id`= 1 and id > 827 ORDER BY `id` ASC "
         self.__cur.execute(sql)
         self.__conn.commit()
         return self.__cur.fetchall()
