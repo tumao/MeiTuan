@@ -53,8 +53,15 @@ class Hotel():
 
     """get hotel info"""
     def getHotelInfo(self):
-        sql = "SELECT id, url FROM `hotel_info` WHERE `web_id`= 1 and id > 827 ORDER BY `id` ASC "
-        self.__cur.execute(sql)
+        print(self.__redis.get("cur_spid_ht_id"))
+
+        if self.__redis.get("cur_spid_ht_id") is not None:
+            cur_spid_ht_id = self.__redis.get("cur_spid_ht_id")
+        else:
+            cur_spid_ht_id = 912
+
+        sql = "SELECT id, url FROM `hotel_info` WHERE `web_id`= 1 and id > %d ORDER BY `id` ASC "
+        self.__cur.execute(sql%(cur_spid_ht_id))
         self.__conn.commit()
         return self.__cur.fetchall()
 
