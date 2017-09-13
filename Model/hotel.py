@@ -1,5 +1,4 @@
 import pymysql
-import redis as redis
 from selenium import webdriver
 import time
 from selenium.common.exceptions import NoSuchElementException
@@ -8,6 +7,7 @@ from lxml import etree
 import redis
 import random
 from pymysql.err import ProgrammingError
+import json
 
 class Hotel():
 
@@ -112,6 +112,7 @@ class Hotel():
 
                         print("save:" + str(ht_id)+'_'+str(page_num))
                         if self.__redis.sismember('is_saved_comments', str(ht_id)+'_'+str(page_num)) == 0:
+                            self.save_source_code(ht_id=ht_id, page_id=int(page_num), source_code=driver.page_source)
                             for x in range(len(comments)):
                                 self.save_comments_info(content=str(comments[x]).strip('\n').strip(" ").replace('\n', ''), star=str(star[x]).strip('width:'), hotel_member_lv=str("000-000"), date=date[x], ht_id=ht_id, page_num=page_num)
                             self.__redis.sadd('is_saved_comments', str(ht_id)+'_'+str(page_num))            # wether saved this page comment
@@ -145,12 +146,17 @@ class Hotel():
     def save_comments_info(self, content, star, hotel_member_lv, date, ht_id, page_num):
         sql = "INSERT INTO `comments`(`content`,`star`,`hotel_member_lv`,`date`, `ht_id`, `page_num`) VALUES ('%s','%s','%s','%s', %d, %d)"
         data = (content, star, hotel_member_lv, date, int(ht_id), int(page_num))
-        print(data)
+        # print(data)
         try:
             self.__cur.execute(sql%data)
             self.__conn.commit()
         except ProgrammingError as pe:
             pass
+
+    """save source code to redis"""
+    def save_source_code(self, ht_id, page_id, source_code):
+        source_code = str(source_code).replace("<script>","|script|").replace("<\script>", "|script|")
+        self.__redis.hset("source_code_comment_"+str(ht_id), str(page_id), json.dumps(source_code))
 
     def __del__(self):
         self.close()
