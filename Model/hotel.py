@@ -93,7 +93,7 @@ class Hotel():
                     next_page = True
                     # driver.find_element_by_xpath("//select[@class='J-filter-ordertype ui-select-small']//option[@value='time']").click() # comment sorted by time
                     while next_page is True:
-                        wait_time = random.randint(15, 25)
+                        wait_time = random.randint(7, 12)
                         # wait_time = 5
                         print("此处停留"+str(wait_time)+"s")
                         time.sleep(wait_time)
@@ -146,7 +146,7 @@ class Hotel():
     def save_comments_info(self, content, star, hotel_member_lv, date, ht_id, page_num):
         sql = "INSERT INTO `comments`(`content`,`star`,`hotel_member_lv`,`date`, `ht_id`, `page_num`) VALUES ('%s','%s','%s','%s', %d, %d)"
         data = (content, star, hotel_member_lv, date, int(ht_id), int(page_num))
-        # print(data)
+        print(data)
         try:
             self.__cur.execute(sql%data)
             self.__conn.commit()
