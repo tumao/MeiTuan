@@ -60,7 +60,7 @@ class Hotel():
         else:
             cur_spid_ht_id = 912
 
-        sql = "SELECT id, url FROM `hotel_info` WHERE `web_id`= 1 and id > %d ORDER BY `id` ASC "
+        sql = "SELECT id, url, ht_id FROM `hotel_info` WHERE `web_id`= 1 and id > %d ORDER BY `id` ASC "
         self.__cur.execute(sql%(cur_spid_ht_id))
         self.__conn.commit()
         return self.__cur.fetchall()
@@ -79,7 +79,8 @@ class Hotel():
             try:
                 ht_id = htinfo[i][0]
                 self.__redis.set('cur_spid_ht_id', ht_id)
-                driver.get("http://" + htinfo[i][1])
+                # driver.get("http://" + htinfo[i][1])
+                driver.get("http://www.meituan.com/jiudian/"+str(htinfo[i][2]))
                 time.sleep(10)
                 # comment_ele = driver.find_element_by_xpath("//ul[@class='J-nav-tabs nav-tabs--normal cf log-mod-viewed']//li[@data-target='.J-poi-comment']/a")
                 comment_ele = driver.find_element_by_xpath("//ul[@class='nav-tabs clearfix bgw']//a[@href='#comment']")
