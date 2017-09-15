@@ -60,7 +60,7 @@ class Hotel():
         else:
             cur_spid_ht_id = 912
 
-        sql = "SELECT id, url FROM `hotel_info` WHERE `web_id`= 1 and id > %d ORDER BY `id` ASC "
+        sql = "SELECT id, url, ht_id FROM `hotel_info` WHERE `web_id`= 1 and id > %d ORDER BY `id` ASC "
         self.__cur.execute(sql%(cur_spid_ht_id))
         self.__conn.commit()
         return self.__cur.fetchall()
@@ -80,7 +80,8 @@ class Hotel():
             try:
                 ht_id = htinfo[i][0]
                 self.__redis.set('cur_spid_ht_id', ht_id)
-                driver.get("http://" + htinfo[i][1])
+                # driver.get("http://" + htinfo[i][1])
+                driver.get("http://www.meituan.com/jiudian/"+str(htinfo[i][2]))
                 time.sleep(10)
                 # comment_ele = driver.find_element_by_xpath("//ul[@class='J-nav-tabs nav-tabs--normal cf log-mod-viewed']//li[@data-target='.J-poi-comment']/a")
                 comment_ele = driver.find_element_by_xpath("//ul[@class='nav-tabs clearfix bgw']//a[@href='#comment']")
@@ -94,7 +95,7 @@ class Hotel():
                     next_page = True
                     # driver.find_element_by_xpath("//select[@class='J-filter-ordertype ui-select-small']//option[@value='time']").click() # comment sorted by time
                     while next_page is True:
-                        wait_time = random.randint(15, 25)
+                        wait_time = random.randint(7, 12)
                         # wait_time = 5
                         print("此处停留"+str(wait_time)+"s")
                         time.sleep(wait_time)
@@ -151,7 +152,7 @@ class Hotel():
     def save_comments_info(self, content, star, hotel_member_lv, date, ht_id, page_num):
         sql = "INSERT INTO `comments`(`content`,`star`,`hotel_member_lv`,`date`, `ht_id`, `page_num`) VALUES ('%s','%s','%s','%s', %d, %d)"
         data = (content, star, hotel_member_lv, date, int(ht_id), int(page_num))
-        # print(data)
+        print(data)
         try:
             self.__cur.execute(sql%data)
             self.__conn.commit()
