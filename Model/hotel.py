@@ -129,8 +129,8 @@ class Hotel():
                         next_page__att = selector.xpath("//div[@class='paginator-wrapper']//li[last()]//@class")
 
                         print(comment_count, next_page__att)
-                        if last_cm_tm < cut_time_st:        # if the last comment time before cut time , break
-                            break
+#                        if last_cm_tm < cut_time_st:        # if the last comment time before cut time , break
+#                            break
 
                         if int(comment_count) < 10 or next_page__att[0] == 'disabled next':   # only one page, next page cannot click
                             print("there is no next page, to next hotel")
