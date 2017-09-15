@@ -74,6 +74,7 @@ class Hotel():
         options.add_argument('--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36')
         # options.add_experimental_option('prefs', {"profile.managed_default_content_settings.images": 2})
         driver = webdriver.Chrome('/usr/bin/chromedriver', chrome_options=options)
+        cut_time_st = self.get_timest("2016-05-03")         # the cut time of comment
         for i in range(len(htinfo)):
 
             try:
@@ -115,6 +116,7 @@ class Hotel():
                             self.save_source_code(ht_id=ht_id, page_id=int(page_num), source_code=driver.page_source)
                             for x in range(len(comments)):
                                 self.save_comments_info(content=str(comments[x]).strip('\n').strip(" ").replace('\n', ''), star=str(star[x]).strip('width:'), hotel_member_lv=str("000-000"), date=date[x], ht_id=ht_id, page_num=page_num)
+                                last_cm_tm = self.get_timest(date[x])
                             self.__redis.sadd('is_saved_comments', str(ht_id)+'_'+str(page_num))            # wether saved this page comment
                         else:
                             print("this page already saved")
@@ -126,6 +128,9 @@ class Hotel():
                         next_page__att = selector.xpath("//div[@class='paginator-wrapper']//li[last()]//@class")
 
                         print(comment_count, next_page__att)
+                        if last_cm_tm < cut_time_st:        # if the last comment time before cut time , break
+                            break
+
                         if int(comment_count) < 10 or next_page__att[0] == 'disabled next':   # only one page, next page cannot click
                             print("there is no next page, to next hotel")
                             next_page = False
@@ -157,6 +162,11 @@ class Hotel():
     def save_source_code(self, ht_id, page_id, source_code):
         source_code = str(source_code).replace("<script>","|script|").replace("<\script>", "|script|")
         self.__redis.hset("source_code_comment_"+str(ht_id), str(page_id), json.dumps(source_code))
+
+    """get timestamp from Y-m-d"""
+    def get_timest(self, timeft):
+        timeArray = time.strptime(timeft, "%Y-%m-%d")
+        return time.mktime(timeArray)
 
     def __del__(self):
         self.close()
